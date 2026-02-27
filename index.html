@@ -124,21 +124,23 @@
         transform: translateY(0);
       }
 
-      .footer-note {
-        display: none;
-      }
-
+      /* ── Validation styles ── */
       .error-msg {
         color: #e84040;
         font-size: 12px;
-        margin-top: 4px;
+        margin-top: 5px;
         display: none;
       }
 
-      .field-error input,
-      .field-error select {
+      .field-error input {
         border-color: #e84040 !important;
         box-shadow: 0 0 0 3px rgba(232, 64, 64, 0.1) !important;
+        background: #fff8f8 !important;
+      }
+
+      .field-success input {
+        border-color: #22c55e !important;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.08) !important;
       }
     </style>
   </head>
@@ -149,11 +151,19 @@
     </p>
 
     <div class="form-card">
+      <!--
+      novalidate disables the browser's own popup validation
+      so our custom JS messages show instead.
+    -->
       <form
+        id="leadForm"
         action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dg5000005vWMr"
         method="POST"
+        novalidate
       >
+        <!-- Hidden Salesforce fields -->
         <input type="hidden" name="oid" value="00Dg5000005vWMr" />
+        <!-- ⚠️ UPDATE THIS retURL to your GitHub Pages thankyou.html URL -->
         <input
           type="hidden"
           name="retURL"
@@ -161,6 +171,7 @@
         />
         <input type="hidden" name="lead_source" value="Website" />
 
+        <!-- First Name + Last Name side by side -->
         <div class="form-row">
           <div class="field">
             <label for="first_name">First Name</label>
@@ -172,7 +183,7 @@
               placeholder="John"
             />
           </div>
-          <div class="field">
+          <div class="field" id="field-last_name">
             <label for="last_name"
               >Last Name <span class="required-star">*</span></label
             >
@@ -181,27 +192,31 @@
               name="last_name"
               type="text"
               maxlength="80"
-              required
               placeholder="Doe"
             />
+            <span class="error-msg" id="err-last_name"
+              >Last name is required</span
+            >
           </div>
         </div>
 
+        <!-- Email -->
         <div class="field" id="field-email">
           <label for="email">Email <span class="required-star">*</span></label>
           <input
             id="email"
             name="email"
-            type="email"
+            type="text"
             maxlength="80"
-            required
             placeholder="john@example.com"
+            autocomplete="off"
           />
           <span class="error-msg" id="err-email"
-            >Please enter a valid email address (e.g. john@example.com)</span
+            >Enter a valid email address (e.g. john@example.com)</span
           >
         </div>
 
+        <!-- Company -->
         <div class="field" id="field-company">
           <label for="company"
             >Company <span class="required-star">*</span></label
@@ -211,7 +226,6 @@
             name="company"
             type="text"
             maxlength="40"
-            required
             placeholder="Your Company Name"
           />
           <span class="error-msg" id="err-company"
@@ -219,6 +233,7 @@
           >
         </div>
 
+        <!-- Mobile — type="text" so we fully control input; maxlength=10 hard-caps digits -->
         <div class="field" id="field-mobile">
           <label for="mobile"
             >Mobile <span class="required-star">*</span></label
@@ -227,15 +242,15 @@
             id="mobile"
             name="mobile"
             type="text"
-            maxlength="40"
-            required
-            placeholder="+91 98765 43210"
+            maxlength="10"
+            placeholder="9876543210"
           />
           <span class="error-msg" id="err-mobile"
-            >Please enter a valid 10-digit mobile number</span
+            >Enter a valid 10-digit mobile number</span
           >
         </div>
 
+        <!-- City -->
         <div class="field">
           <label for="city">City</label>
           <input
@@ -247,6 +262,7 @@
           />
         </div>
 
+        <!-- Country + State side by side -->
         <div class="form-row">
           <div class="field">
             <label for="country_code">Country</label>
@@ -272,76 +288,183 @@
           </div>
         </div>
 
-        <button type="submit" onclick="return validateForm();">
-          Submit &rarr;
-        </button>
+        <button type="submit">Submit &rarr;</button>
       </form>
     </div>
 
-    <p class="footer-note"></p>
-
     <script>
-      function validateForm() {
-        let valid = true;
-
-        const email = document.getElementById("email");
-        const emailField = document.getElementById("field-email");
-        const emailErr = document.getElementById("err-email");
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-        if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
-          emailField.classList.add("field-error");
-          emailErr.style.display = "block";
-          valid = false;
-        } else {
-          emailField.classList.remove("field-error");
-          emailErr.style.display = "none";
-        }
-
-        const company = document.getElementById("company");
-        const companyField = document.getElementById("field-company");
-        const companyErr = document.getElementById("err-company");
-        if (!company.value.trim()) {
-          companyField.classList.add("field-error");
-          companyErr.style.display = "block";
-          valid = false;
-        } else {
-          companyField.classList.remove("field-error");
-          companyErr.style.display = "none";
-        }
-
-        const mobile = document.getElementById("mobile");
-        const mobileField = document.getElementById("field-mobile");
-        const mobileErr = document.getElementById("err-mobile");
-        const mobileClean = mobile.value.trim().replace(/[\s\-().]/g, "");
-        const mobileRegex = /^(\+?\d{1,3})?\d{10}$/;
-        if (!mobile.value.trim() || !mobileRegex.test(mobileClean)) {
-          mobileField.classList.add("field-error");
-          mobileErr.style.display = "block";
-          valid = false;
-        } else {
-          mobileField.classList.remove("field-error");
-          mobileErr.style.display = "none";
-        }
-
-        if (!valid) {
-          document
-            .querySelector(".field-error")
-            ?.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-
-        return valid;
+      // ─────────────────────────────────────────────
+      // Helpers
+      // ─────────────────────────────────────────────
+      function showError(fieldId, message) {
+        const wrapper = document.getElementById("field-" + fieldId);
+        const errSpan = document.getElementById("err-" + fieldId);
+        wrapper.classList.add("field-error");
+        wrapper.classList.remove("field-success");
+        if (message) errSpan.textContent = "⚠ " + message;
+        errSpan.style.display = "block";
       }
 
-      ["email", "company", "mobile"].forEach((id) => {
-        document.getElementById(id).addEventListener("input", function () {
-          const field = document.getElementById("field-" + id);
-          const err = document.getElementById("err-" + id);
-          if (this.value.trim()) {
-            field.classList.remove("field-error");
-            err.style.display = "none";
+      function clearError(fieldId) {
+        const wrapper = document.getElementById("field-" + fieldId);
+        const errSpan = document.getElementById("err-" + fieldId);
+        if (!wrapper) return;
+        wrapper.classList.remove("field-error", "field-success");
+        errSpan.style.display = "none";
+      }
+
+      function markSuccess(fieldId) {
+        const wrapper = document.getElementById("field-" + fieldId);
+        const errSpan = document.getElementById("err-" + fieldId);
+        if (!wrapper) return;
+        wrapper.classList.remove("field-error");
+        wrapper.classList.add("field-success");
+        errSpan.style.display = "none";
+      }
+
+      // ─────────────────────────────────────────────
+      // Validation rules
+      // ─────────────────────────────────────────────
+
+      // Email: standard format, requires @ and a real TLD (min 2 chars)
+      const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
+      // Mobile: exactly 10 digits, nothing else
+      const MOBILE_REGEX = /^\d{10}$/;
+
+      function validateLastName() {
+        const val = document.getElementById("last_name").value.trim();
+        if (!val) {
+          showError("last_name", "Last name is required");
+          return false;
+        }
+        markSuccess("last_name");
+        return true;
+      }
+
+      function validateEmail() {
+        const val = document.getElementById("email").value.trim();
+        if (!val) {
+          showError("email", "Email is required");
+          return false;
+        }
+        if (!EMAIL_REGEX.test(val)) {
+          showError(
+            "email",
+            "Enter a valid email address (e.g. john@example.com)",
+          );
+          return false;
+        }
+        markSuccess("email");
+        return true;
+      }
+
+      function validateCompany() {
+        const val = document.getElementById("company").value.trim();
+        if (!val) {
+          showError("company", "Company name is required");
+          return false;
+        }
+        markSuccess("company");
+        return true;
+      }
+
+      function validateMobile() {
+        const val = document.getElementById("mobile").value.trim();
+        if (!val) {
+          showError("mobile", "Mobile number is required");
+          return false;
+        }
+        if (!MOBILE_REGEX.test(val)) {
+          showError(
+            "mobile",
+            "Enter exactly 10 digits, no spaces or symbols (e.g. 9876543210)",
+          );
+          return false;
+        }
+        markSuccess("mobile");
+        return true;
+      }
+
+      // ─────────────────────────────────────────────
+      // Block non-digit keystrokes in mobile field
+      // ─────────────────────────────────────────────
+      document
+        .getElementById("mobile")
+        .addEventListener("keydown", function (e) {
+          const allowed = [
+            "Backspace",
+            "Delete",
+            "Tab",
+            "Enter",
+            "ArrowLeft",
+            "ArrowRight",
+            "Home",
+            "End",
+          ];
+          // Allow Ctrl/Cmd shortcuts (copy, paste, select-all)
+          if (e.ctrlKey || e.metaKey) return;
+          if (allowed.includes(e.key)) return;
+          // Block anything that is not a digit
+          if (!/^\d$/.test(e.key)) {
+            e.preventDefault();
           }
         });
+
+      // Strip non-digits if user pastes text into mobile field
+      document.getElementById("mobile").addEventListener("paste", function (e) {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData(
+          "text",
+        );
+        const digitsOnly = pasted.replace(/\D/g, "").slice(0, 10);
+        this.value = digitsOnly;
       });
+
+      // ─────────────────────────────────────────────
+      // Live feedback: validate on blur, clear on input
+      // ─────────────────────────────────────────────
+      const liveFields = [
+        { id: "last_name", fn: validateLastName },
+        { id: "email", fn: validateEmail },
+        { id: "company", fn: validateCompany },
+        { id: "mobile", fn: validateMobile },
+      ];
+
+      liveFields.forEach(({ id, fn }) => {
+        document.getElementById(id).addEventListener("blur", fn);
+        document
+          .getElementById(id)
+          .addEventListener("input", () => clearError(id));
+      });
+
+      // ─────────────────────────────────────────────
+      // Form submit — block if ANY validation fails
+      // ─────────────────────────────────────────────
+      document
+        .getElementById("leadForm")
+        .addEventListener("submit", function (e) {
+          // Run all validators (don't short-circuit so all errors show at once)
+          const ok = [
+            validateLastName(),
+            validateEmail(),
+            validateCompany(),
+            validateMobile(),
+          ].every(Boolean);
+
+          if (!ok) {
+            e.preventDefault(); // ← this is what actually stops Salesforce submission
+            e.stopImmediatePropagation();
+            // Scroll smoothly to the topmost error field
+            const firstError = document.querySelector(".field-error");
+            if (firstError)
+              firstError.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+          }
+          // If ok === true, form submits to Salesforce and retURL redirects to thankyou.html
+        });
     </script>
   </body>
 </html>
