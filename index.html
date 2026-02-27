@@ -22,15 +22,6 @@
         padding: 40px 20px;
       }
 
-      .page-title {
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: #1b96ff;
-        margin-bottom: 10px;
-      }
-
       .page-heading {
         font-size: 32px;
         font-weight: 700;
@@ -134,15 +125,24 @@
       }
 
       .footer-note {
-        font-size: 13px;
-        color: #999;
-        text-align: center;
-        margin-top: 18px;
+        display: none;
+      }
+
+      .error-msg {
+        color: #e84040;
+        font-size: 12px;
+        margin-top: 4px;
+        display: none;
+      }
+
+      .field-error input,
+      .field-error select {
+        border-color: #e84040 !important;
+        box-shadow: 0 0 0 3px rgba(232, 64, 64, 0.1) !important;
       }
     </style>
   </head>
   <body>
-    <p class="page-title">Get in Touch</p>
     <h1 class="page-heading">Contact Us</h1>
     <p class="page-sub">
       Fill out the form below and our team will reach out shortly.
@@ -153,9 +153,7 @@
         action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dg5000005vWMr"
         method="POST"
       >
-        <!-- Hidden Salesforce fields -->
         <input type="hidden" name="oid" value="00Dg5000005vWMr" />
-        <!-- ⚠️ UPDATE THIS retURL to your GitHub Pages thankyou.html URL -->
         <input
           type="hidden"
           name="retURL"
@@ -163,7 +161,6 @@
         />
         <input type="hidden" name="lead_source" value="Website" />
 
-        <!-- First Name + Last Name side by side -->
         <div class="form-row">
           <div class="field">
             <label for="first_name">First Name</label>
@@ -190,8 +187,7 @@
           </div>
         </div>
 
-        <!-- Email -->
-        <div class="field">
+        <div class="field" id="field-email">
           <label for="email">Email <span class="required-star">*</span></label>
           <input
             id="email"
@@ -201,21 +197,45 @@
             required
             placeholder="john@example.com"
           />
+          <span class="error-msg" id="err-email"
+            >Please enter a valid email address (e.g. john@example.com)</span
+          >
         </div>
 
-        <!-- Mobile -->
-        <div class="field">
-          <label for="mobile">Mobile</label>
+        <div class="field" id="field-company">
+          <label for="company"
+            >Company <span class="required-star">*</span></label
+          >
+          <input
+            id="company"
+            name="company"
+            type="text"
+            maxlength="40"
+            required
+            placeholder="Your Company Name"
+          />
+          <span class="error-msg" id="err-company"
+            >Company name is required</span
+          >
+        </div>
+
+        <div class="field" id="field-mobile">
+          <label for="mobile"
+            >Mobile <span class="required-star">*</span></label
+          >
           <input
             id="mobile"
             name="mobile"
             type="text"
             maxlength="40"
+            required
             placeholder="+91 98765 43210"
           />
+          <span class="error-msg" id="err-mobile"
+            >Please enter a valid 10-digit mobile number</span
+          >
         </div>
 
-        <!-- City -->
         <div class="field">
           <label for="city">City</label>
           <input
@@ -227,7 +247,6 @@
           />
         </div>
 
-        <!-- Country + State side by side -->
         <div class="form-row">
           <div class="field">
             <label for="country_code">Country</label>
@@ -253,12 +272,76 @@
           </div>
         </div>
 
-        <button type="submit">Submit &rarr;</button>
+        <button type="submit" onclick="return validateForm();">
+          Submit &rarr;
+        </button>
       </form>
     </div>
 
-    <p class="footer-note">
-      🔒 Your information is safe with us. We never share your data.
-    </p>
+    <p class="footer-note"></p>
+
+    <script>
+      function validateForm() {
+        let valid = true;
+
+        const email = document.getElementById("email");
+        const emailField = document.getElementById("field-email");
+        const emailErr = document.getElementById("err-email");
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+          emailField.classList.add("field-error");
+          emailErr.style.display = "block";
+          valid = false;
+        } else {
+          emailField.classList.remove("field-error");
+          emailErr.style.display = "none";
+        }
+
+        const company = document.getElementById("company");
+        const companyField = document.getElementById("field-company");
+        const companyErr = document.getElementById("err-company");
+        if (!company.value.trim()) {
+          companyField.classList.add("field-error");
+          companyErr.style.display = "block";
+          valid = false;
+        } else {
+          companyField.classList.remove("field-error");
+          companyErr.style.display = "none";
+        }
+
+        const mobile = document.getElementById("mobile");
+        const mobileField = document.getElementById("field-mobile");
+        const mobileErr = document.getElementById("err-mobile");
+        const mobileClean = mobile.value.trim().replace(/[\s\-().]/g, "");
+        const mobileRegex = /^(\+?\d{1,3})?\d{10}$/;
+        if (!mobile.value.trim() || !mobileRegex.test(mobileClean)) {
+          mobileField.classList.add("field-error");
+          mobileErr.style.display = "block";
+          valid = false;
+        } else {
+          mobileField.classList.remove("field-error");
+          mobileErr.style.display = "none";
+        }
+
+        if (!valid) {
+          document
+            .querySelector(".field-error")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
+        return valid;
+      }
+
+      ["email", "company", "mobile"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", function () {
+          const field = document.getElementById("field-" + id);
+          const err = document.getElementById("err-" + id);
+          if (this.value.trim()) {
+            field.classList.remove("field-error");
+            err.style.display = "none";
+          }
+        });
+      });
+    </script>
   </body>
 </html>
