@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thank You!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0eaff 0%, #c7d9ff 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .card {
+      max-width: 560px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(27, 150, 255, 0.12);
+      padding: 56px 40px 48px;
+      text-align: center;
+    }
+
+    .icon-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 88px;
+      height: 88px;
+      background: linear-gradient(135deg, #1b96ff, #0073e6);
+      border-radius: 50%;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(27, 150, 255, 0.35);
+    }
+
+    .icon-wrap svg {
+      width: 44px;
+      height: 44px;
+      fill: none;
+      stroke: white;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e8f4ff;
+      color: #1b96ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 34px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 14px;
+    }
+
+    .message {
+      font-size: 17px;
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .sub-message {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 36px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 0 0 30px;
+    }
+
+    .info-strip {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .info-item .icon-sm {
+      font-size: 22px;
+    }
+
+    .info-item .label {
+      font-size: 12px;
+      color: #aaa;
+      font-weight: 500;
+    }
+
+    .info-item .value {
+      font-size: 13px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .btn-home {
+      display: inline-block;
+      padding: 14px 36px;
+      background: linear-gradient(135deg, #1b96ff, #0073e6);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      transition: opacity 0.2s, transform 0.1s;
+      box-shadow: 0 4px 14px rgba(27, 150, 255, 0.35);
+    }
+
+    .btn-home:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-home:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <div class="badge">Submission Confirmed</div>
+
+    <h1>Thank You! 🎉</h1>
+
+    <p class="message">Your lead has been submitted successfully.<br>Our team will contact you shortly.</p>
+    <p class="sub-message">Please check your email for a confirmation. We typically respond within 24–48 hours.</p>
+
+    <hr class="divider">
+
+    <div class="info-strip">
+      <div class="info-item">
+        <span class="icon-sm">📋</span>
+        <span class="label">Status</span>
+        <span class="value">Received</span>
+      </div>
+      <div class="info-item">
+        <span class="icon-sm">⏱️</span>
+        <span class="label">Response Time</span>
+        <span class="value">24–48 hrs</span>
+      </div>
+      <div class="info-item">
+        <span class="icon-sm">📧</span>
+        <span class="label">Confirmation</span>
+        <span class="value">Sent to Email</span>
+      </div>
+    </div>
+
+    <a href="index.html" class="btn-home">← Back to Home</a>
+
+  </div>
+
+</body>
+</html>
